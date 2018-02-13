@@ -1,16 +1,56 @@
 package main
 
 import (
+	"html/template"
+	"log"
 	"net/http"
 )
 
-func main() {
+//C:\Users\rsvit\Go\TranspApp\bin\Templates
+//C:\Users\rsvit\Go\TranspApp\src\main
 
-	http.HandleFunc("/", serveHome)
+var tpl *template.Template
+
+func init() {
+	tpl = template.Must(template.ParseGlob("templates/*.html"))
+}
+
+func main() {
+	http.HandleFunc("/home", home)
+	http.HandleFunc("/about", about)
+	http.HandleFunc("/contact", contact)
+	http.Handle("/favicon.ico", http.NotFoundHandler())
 	http.ListenAndServe(":8080", nil)
+}
+
+//funcoes que recebem e direcionam para pagina...
+
+func home(w http.ResponseWriter, r *http.Request) {
+	err := tpl.ExecuteTemplate(w, "index.html", nil)
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "Internal Several error", http.StatusInternalServerError)
+		return
+	}
 
 }
 
-func serveHome(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Hello World"))
+func about(w http.ResponseWriter, r *http.Request) {
+	err := tpl.ExecuteTemplate(w, "about.html", nil)
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "Internal Several error", http.StatusInternalServerError)
+		return
+	}
+
+}
+
+func contact(w http.ResponseWriter, r *http.Request) {
+	err := tpl.ExecuteTemplate(w, "contact.html", nil)
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "Internal Several error", http.StatusInternalServerError)
+		return
+	}
+
 }
